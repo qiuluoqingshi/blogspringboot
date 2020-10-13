@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="blogindex/header::head-fragment"></head>
+<body id="blog">
+<div th:replace="blogindex/header::nav-fragment"></div>
+<div th:replace="blogindex/header::header-fragment"></div>
+<div class="am-g am-g-fixed blog-fixed">
+    <div class="am-u-lg-8 am-u-sm-12">
+        <main class="links-list">
+            <th:block th:unless="${#lists.isEmpty(friendLinks)}">
+                <div class="title">
+                    <h3>友链</h3>
+                </div>
+                <div class="list">
+                    <ul>
+                        <th:block th:each="friendLink : ${friendLinks}">
+                            <li><a th:href="@{${friendLink.linkHref}}"
+                                   th:text="${friendLink.linkName}">友链</a>
+                                -
+                                <th:block th:text="${friendLink.linkDescription}"></th:block>
+                                -
+                                <th:block th:text="${friendLink.linkAuthor}"></th:block>
+                            </li>
+                        </th:block>
+                    </ul>
+                </div>
+            </th:block>
+            <th:block th:unless="${#lists.isEmpty(recommendLinks)}">
+                <div class="title">
+                    <h3>推荐网站</h3>
+                </div>
+                <div class="list">
+                    <ul>
+                        <th:block th:each="recommendLink : ${recommendLinks}">
+                            <li><a th:href="@{${recommendLink.linkHref}}" th:text="${recommendLink.linkName}">推荐网站</a>
+                                -
+                                <th:block th:text="${recommendLink.linkDescription}"></th:block>
+                                -
+                                <th:block th:text="${recommendLink.linkAuthor}"></th:block>
+                            </li>
+                        </th:block>
+                    </ul>
+                </div>
+            </th:block>
+            <th:block th:unless="${#lists.isEmpty(personalLinks)}">
+                <div class="title">
+                    <h3>个人链接</h3>
+                </div>
+                <div class="list">
+                    <ul>
+                        <th:block th:each="personalLink : ${personalLinks}">
+                            <li><a th:href="@{${personalLink.linkHref}}"
+                                   th:text="${personalLink.linkName}">个人链接</a>
+                                -
+                                <th:block th:text="${personalLink.linkDescription}"></th:block>
+                                -
+                                <th:block th:text="${personalLink.linkAuthor}"></th:block>
+                            </li>
+                        </th:block>
+                    </ul>
+                </div>
+            </th:block>
+            <h2 id="个人链接">链接须知</h2>
+            <p>欢迎各位道友交换友链，十分欢迎~</p>
+            <p>我的联系方式是
+                <th:block th:text="${configuration.authorContact}"></th:block>
+                , 格式要求如下:
+            </p>
+            <ul>
+                <li>网站名称：QBlog</li>
+                <li>网站链接：http://qlqs.xyz</li>
+                <li>网站描述：秋落轻世的博客网站</li>
+            </ul>
+            <p>请保证自己的链接长期有效,不然可能会被清理.</p>
+        </main>
+    </div>
+</div>
+<!-- 引入页脚footer-fragment -->
+<footer th:replace="blogindex/footer::footer-fragment"></footer>
+</body>
+</html>

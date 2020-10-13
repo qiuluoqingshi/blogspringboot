@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qlqs.blogspringboot.dao.UserCommentDao">
+    <insert id="insertUserComment" parameterType="CommentDetail" useGeneratedKeys="true" keyProperty="commentId" >
+        insert into blogcomment(user_id,comment_content,comment_time,reply_user_id,pid)
+        values(#{userId},#{commentContent},#{commentTime},#{replyUserId},#{pid})
+    </insert>
+
+    <insert id="insertBlogCommentTable">
+        insert into bdetail_bcomment(blog_id,comment_id) values(#{blogid},#{commentDetail.commentId})
+    </insert>
+
+    <select id="findBlogIdByUserId" parameterType="String" resultType="Long">
+        select blog_id from uaccount_bdetail where user_id = #{userid}
+    </select>
+    <select id="findCommentDetailByBlogId" parameterType="Map" resultType="CommentDetail">
+        select udbc.*,ua1.user_name from (select bc.* from blogdetail bd
+        left join bdetail_bcomment bdbc on bdbc.blog_id = bd.blog_id
+        left join blogcomment bc on bc.comment_id = bdbc.comment_id
+        where bd.blog_id = #{blogid}
+        order by bc.comment_time DESC limit #{start},#{limit}) as udbc
+        left join userdetail ua1 on ua1.user_id = udbc.user_id
+    </select>
+    <select id="findCommentDetailAmountByBlogId" parameterType="Map" resultType="int">
+        select count(*) from bdetail_bcomment where blog_id = #{blogid}
+    </select>
+    <delete id="deleteCommentDetail" parameterType="java.util.List">
+        delete bc.*,bdbc.* from blogcomment bc left join bdetail_bcomment bdbc on bdbc.comment_id = bc.comment_id
+        where bdbc.comment_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+        or bc.pid in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+</mapper>

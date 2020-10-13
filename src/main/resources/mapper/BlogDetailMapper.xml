@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qlqs.blogspringboot.dao.BlogDetailDao">
+    <resultMap id="BlogDetail" type="BlogDetail">
+        <id property="blogId" column="blog_id"></id>
+        <result property="blogTitle" column="blog_title"></result>
+        <result property="blogCoverImage" column="blog_cover_image"></result>
+        <result property="blogContent" column="blog_content"></result>
+        <result property="blogCategory" column="blog_category"></result>
+        <result property="blogStatus" column="blog_status"></result>
+        <result property="blogViews" column="blog_views"></result>
+        <result property="enableComment" column="enable_comment"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="updateTime" column="update_time"></result>
+        <association property="userDetail" javaType="com.qlqs.blogspringboot.entity.UserDetail">
+            <id property="userId" column="user_id"></id>
+            <result property="userName" column="user_name"></result>
+            <result property="userSignature" column="user_signature"></result>
+            <result property="userSex" column="user_sex"></result>
+            <result property="userBirth" column="user_birth"></result>
+            <result property="userQq" column="user_qq"></result>
+            <result property="userPhone" column="user_phone"></result>
+            <result property="userSchool" column="user_school"></result>
+            <result property="userCompany" column="user_company"></result>
+            <result property="userWeixin" column="user_weixin"></result>
+            <result property="userAvatar" column="user_avatar"></result>
+        </association>
+    </resultMap>
+    <select id="findBlogDetail" parameterType="Map" resultMap="BlogDetail">
+        select * from blogdetail bd
+        left join uaccount_bdetail ua_bd on bd.blog_id = ua_bd.blog_id
+        left join userdetail ud on ud.user_id = ua_bd.user_id
+        where
+        <if test="blogStatus!=null">
+            bd.blog_status = #{blogStatus}
+        </if>
+        <if test="userId!=null and searchword != null">
+            ud.user_id = #{userId}
+            and (bd.blog_title like CONCAT(CONCAT('%', #{keyword}), '%') or ud.user_name like CONCAT(CONCAT('%', #{keyword}), '%'))
+        </if>
+        <if test="categoryname!=null">
+            and bd.blog_category = #{categoryname}
+        </if>
+        <if test="keyword!=null">
+            and (bd.blog_title like CONCAT(CONCAT('%', #{keyword}), '%') or ud.user_name like CONCAT(CONCAT('%', #{keyword}), '%'))
+        </if>
+        <if test="start != null and limit != null ">
+            limit #{start},#{limit}
+        </if>
+    </select>
+    <select id="findBlogAmount" parameterType="Map" resultType="int">
+        select count(*) from blogdetail bd
+        left join uaccount_bdetail ua_bd on bd.blog_id = ua_bd.blog_id
+        left join userdetail ud on ud.user_id = ua_bd.user_id
+        where
+        <if test="blogStatus!=null">
+            bd.blog_status = #{blogStatus}
+        </if>
+        <if test="categoryname!=null">
+            and bd.blog_category = #{categoryname}
+        </if>
+        <if test="keyword!=null">
+            and (bd.blog_title like CONCAT(CONCAT('%', #{keyword}), '%') or ud.user_name like CONCAT(CONCAT('%', #{keyword}), '%'))
+        </if>
+    </select>
+
+    <select id="findBlogDetailOnBackGround" parameterType="Map" resultType="BlogDetail">
+        select bd.* from blogdetail bd
+        left join uaccount_bdetail ua_bd on bd.blog_id = ua_bd.blog_id
+        <if test="userId!=null and keyword != null">
+            where ua_bd.user_id = #{userId}
+            and bd.blog_title like CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+        <if test="keyword==null and userId!=null">
+            where ua_bd.user_id = #{userId}
+        </if>
+        order by bd.create_time
+        <if test="start != null and limit != null ">
+            limit #{start},#{limit}
+        </if>
+
+    </select>
+
+    <select id="findBlogAmountOnBackGround" parameterType="Map" resultType="int">
+        select count(*) from blogdetail bd
+        left join uaccount_bdetail ua_bd on bd.blog_id = ua_bd.blog_id
+        <if test="userId!=null and keyword != null">
+            where ua_bd.user_id = #{userId}
+            and bd.blog_title like CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+        <if test="keyword!=null and userId==null">
+            where bd.blog_title like CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+        <if test="keyword==null and userId!=null">
+            where ua_bd.user_id = #{userId}
+        </if>
+    </select>
+    <select id="findBlogDetailByUserId" parameterType="Map" resultMap="BlogDetail">
+        select bd.*,ud.* from blogdetail bd
+        left join uaccount_bdetail ua_bd on bd.blog_id = ua_bd.blog_id
+        left join userdetail ud on ud.user_id = ua_bd.user_id
+        where ud.user_id = #{userid}
+        <if test="blogStatus!=null">
+            and bd.blog_status = #{blogStatus}
+        </if>
+        <if test="start != null and limit != null ">
+            limit #{start},#{limit}
+        </if>
+    </select>
+    <select id="findBlogAmountByUserId" parameterType="Map" resultType="int">
+        select count(*) from blogdetail bd
+        left join uaccount_bdetail ua_bd on bd.blog_id = ua_bd.blog_id
+        where ua_bd.user_id = #{userid}
+        <if test="blogStatus!=null">
+            and bd.blog_status = #{blogStatus}
+        </if>
+    </select>
+    <select id="findBlogDetailByTag" parameterType="Map" resultMap="BlogDetail">
+        select * from (
+            select bd.* from bdetail_btag bdbt
+            left join  blogdetail bd on bd.blog_id = bdbt.blog_id
+            where bdbt.tag_id = #{tagid}
+            <if test="blogStatus!=null">
+                and bd.blog_status = #{blogStatus}
+            </if>
+            <if test="start != null and limit != null ">
+                limit #{start},#{limit}
+            </if>
+        ) as bdtail left join uaccount_bdetail ua_bd on bdtail.blog_id = ua_bd.blog_id
+        left join userdetail ud on ud.user_id = ua_bd.user_id
+    </select>
+    <select id="findBlogAmountByTag" parameterType="Map" resultType="int">
+        select count(*) from bdetail_btag bdbt
+        left join  blogdetail bd on bd.blog_id = bdbt.blog_id
+        where bdbt.tag_id = #{tagid}
+        <if test="blogStatus!=null">
+            and bd.blog_status = #{blogStatus}
+        </if>
+    </select>
+    <update id="updateTagViews" parameterType="long">
+        update blogtag set tag_views = tag_views+1 where tag_id=#{tagid};
+    </update>
+    <select id="findBlogDetailByBlogId" parameterType="long" resultType="BlogDetail">
+        select * from blogdetail bd
+        left join uaccount_bdetail uabd on uabd.blog_id = bd.blog_id
+        left join userdetail ud on ud.user_id = uabd.user_id
+        where bd.blog_id = #{blogid} and blog_status = 1
+    </select>
+    <select id="findBlogTagDetailByBlogId" parameterType="long" resultType="TagDetail">
+        select bt.* from blogdetail bd
+        left join bdetail_btag bdbt on bdbt.blog_id = bd.blog_id
+        left join blogtag bt on bt.tag_id = bdbt.tag_id
+        where bd.blog_id = #{blogid}
+    </select>
+    <select id="findBlogCommentDetailByBlogId" parameterType="Map" resultType="CommentDetail">
+        select udbc.*,ua1.user_name,ua1.user_avatar from (select bc.* from blogdetail bd
+        left join bdetail_bcomment bdbc on bdbc.blog_id = bd.blog_id
+        left join blogcomment bc on bc.comment_id = bdbc.comment_id
+        where bd.blog_id = #{blogid} and bc.pid = #{pid}
+        order by bc.comment_time DESC limit #{start},#{limit}) as udbc
+        left join userdetail ua1 on ua1.user_id = udbc.user_id
+    </select>
+
+    <select id="findBlogReplyDetailByBlogId" parameterType="Map" resultType="CommentDetail">
+        select udbc.*,ua1.user_name,ua1.user_avatar,ua2.user_name as reply_user_name from (select bc.* from blogdetail bd
+        left join bdetail_bcomment bdbc on bdbc.blog_id = bd.blog_id
+        left join blogcomment bc on bc.comment_id = bdbc.comment_id
+        where bd.blog_id = #{blogid} and bc.pid &lt;&gt; 0 and bc.pid = #{commentid}) as udbc
+        left join userdetail ua1 on ua1.user_id = udbc.user_id
+        left join userdetail ua2 on ua2.user_id = udbc.reply_user_id
+    </select>
+    <select id="findBlogCommentAmountByBlogId" parameterType="long" resultType="int">
+        select count(*) from bdetail_bcomment where blog_id = #{blogid}
+    </select>
+    <select id="findBlogOnlyCommentAmountByBlogId" parameterType="long" resultType="int">
+        select count(*) from blogdetail bd
+        left join bdetail_bcomment bdbc on bdbc.blog_id = bd.blog_id
+        left join blogcomment bc on bc.comment_id = bdbc.comment_id
+        where bd.blog_id = #{blogid} and bc.pid = 0
+    </select>
+    <update id="updateBlogViews" parameterType="long">
+        update blogdetail set blog_views = blog_views + 1 where blog_id = #{blogid}
+    </update>
+    <select id="findBlogTagAmountByBlogId" parameterType="long" resultType="int">
+        select count(*) from bdetail_btag where blog_id = #{blogid}
+    </select>
+    <insert id="newBlogInsert" parameterType="BlogDetail" useGeneratedKeys="true" keyProperty="blogId">
+        insert into blogdetail(blog_title,blog_cover_image,blog_content,blog_category,blog_status,enable_comment,create_time,update_time)
+        values(#{blogTitle},#{blogCoverImage},#{blogContent},#{blogCategory},#{blogStatus},#{enableComment},#{createTime},#{createTime})
+    </insert>
+    <update id="oldBlogUpdate" parameterType="BlogDetail">
+        update blogdetail set blog_title=#{blogTitle},blog_cover_image=#{blogCoverImage},blog_category=#{blogCategory},blog_content=#{blogContent},blog_status=#{blogStatus},enable_comment=#{enableComment},update_time=#{updateTime}
+        where blog_id = #{blogId}
+    </update>
+    <insert id="newBlogAndUserConnect" >
+        insert into uaccount_bdetail(user_id,blog_id)
+        values(#{userId},#{blogDetail.blogId})
+    </insert>
+    <delete id="oldBlogsDelete" parameterType="java.util.List">
+        delete bd.*,bdbc.*,bc.* from blogdetail bd left join bdetail_bcomment bdbc on bdbc.blog_id = bd.blog_id
+        left join blogcomment bc on bc.comment_id = bdbc.comment_id
+        where bd.blog_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+        ;
+        delete from bdetail_btag where blog_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+        ;
+        delete from uaccount_bdetail
+        where blog_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+        ;
+    </delete>
+
+    <select id="findBlogDetailsByUserId" parameterType="String" resultType="BlogDetail">
+        select bd.* from blogDetail bd left join uaccount_bdetail uabd on uabd.blog_id = bd.blog_id
+        where uabd.user_id = #{userid}
+    </select>
+</mapper>

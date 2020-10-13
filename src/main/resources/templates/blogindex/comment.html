@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<aside th:fragment="comment-fragment" class="comments" id="comments">
+    <div class="usercomment">
+        <div shiro:guest="" class="usercommentSubmit">
+            <h3>请先登录在进行评论</h3>
+        </div>
+        <p></p>
+        <div shiro:user="" class="usercommentSubmit">
+            <th:block th:if="${blogDetailVo.blogDetail.enableComment } == 0">
+                <img class="avatar" th:each="cookie :${#httpServletRequest.getCookies()}" th:if="${cookie.getName().equals('userAvatar')}" th:src="@{${cookie.getValue()}}"/>
+                <textarea id="usercommentcontent" name="msg" class="commentcontent" placeholder="发条友善的评论" rows="5" cols="80"></textarea>
+                <button class="small blue commentsubmit" type="submit" th:onclick="'usercomment()'">发表评论</button>
+            </th:block>
+            <th:block th:if="${blogDetailVo.blogDetail.enableComment } == 1">
+                <p>该贴已经设置为不可评论和回复</p>
+            </th:block>
+        </div>
+    </div>
+    <th:block th:if="${blogDetailVo.onlyCommentAccount} gt 0">
+        <div th:each="comment,iterStat : ${blogDetailVo.userCommentDetails}" th:id="'commentDiv'+${comment.commentId}">
+            <article class="comment" >
+                <header class="clearfix">
+                    <a th:href="@{'/userdetail/' + ${comment.userId}}" ><img th:src="@{${comment.userAvatar}}" class="avatar"/></a>
+                    <div class="meta">
+                        <a th:href="@{'/userdetail/' + ${comment.userId}}" ><h3 id="cmuserName" th:text="${comment.userName}" style="font-size: 15px"></h3></a>
+                        <th:block th:text="${comment.commentContent}" th:style="'font-size: 30px;'"></th:block><br>
+                        <span class="date" th:style="'font-size: 20px;'">
+                            <th:block th:text="${#dates.format(comment.commentTime, 'yyyy-MM-dd HH:mm:ss')}" ></th:block>
+                            <button shiro:user="" th:if="${blogDetailVo.blogDetail.enableComment } == 0" class="blue commentsubmit" type="submit" th:text="回复"
+                                    th:onclick="replybtn(this,[[${comment.commentId}]],[[${comment}]])" th:style="'width: 40px;height: 20px;padding: 0;margin: 0'"></button>
+                        </span>
+                    </div>
+                </header>
+            </article>
+            <th:block th:each="reply,iterStat : ${blogDetailVo.userReplyDetails}">
+                <article class="comment reply">
+                    <th:block th:if="${reply.pid == comment.commentId}">
+                        <header class="clearfix">
+                            <a th:href="@{'/userdetail/' + ${reply.userId}}" >
+                                <img th:src="@{${reply.userAvatar}}" style="float: left;width: 50px;height: 50px;border-radius: 100%;margin: 15px 0px 0px 15px;">
+                            </a>
+                            <div class="meta">
+                                <h3 class="" th:text="${reply.userName}"></h3>
+                                <div class="reply-body">
+                                    <th:block th:text="'回复'+${reply.replyUserName}+'：'+${reply.commentContent}"></th:block>
+                                </div>
+                                <span class="date">
+                                    <th:block th:text="'回复时间：'+${#dates.format(reply.commentTime, 'yyyy-MM-dd HH:mm:ss')}"></th:block>
+                                    <button shiro:user="" th:if="${blogDetailVo.blogDetail.enableComment } == 0" class="blue commentsubmit replybtn" type="submit" th:text="回复"
+                                            th:onclick="replybtn(this,[[${comment.commentId}]],[[${reply}]])" th:style="'width: 40px;height: 20px;padding: 0;margin: 0'"></button>
+                                </span>
+                            </div>
+                        </header>
+
+                    </th:block>
+                </article>
+            </th:block>
+        </div>
+    </th:block>
+    <th:block th:if="${blogDetailVo.onlyCommentAccount} le 0">
+        <h1>暂无评论</h1>
+    </th:block>
+    <th:block th:if="${blogDetailVo.onlyCommentAccount gt 0}">
+        <ul class="am-pagination">
+            <li th:class="${blogDetailVo.currentPageNum==1}?'disabled' : ''">
+                <a th:onclick="prepage([[${blogDetailVo.currentPageNum}-1]])">&laquo;</a>
+<!--                th:href="'##':'/blog/'+${blogDetailVO.blogId}+'?commentPage=' + ${blogDetailVo.currentPageNum-1}+'#comments'}"-->
+            </li>
+            <li th:if="${blogDetailVo.currentPageNum-3 >=1}"><a
+                    th:onclick="prepage([[${blogDetailVo.currentPageNum}-3]])"
+                    th:text="${blogDetailVo.currentPageNum -3}">1</a></li>
+            <li th:if="${blogDetailVo.currentPageNum-2 >=1}"><a
+                    th:onclick="prepage([[${blogDetailVo.currentPageNum}-2]])"
+                    th:text="${blogDetailVo.currentPageNum -2}">1</a></li>
+            <li th:if="${blogDetailVo.currentPageNum-1 >=1}"><a
+                    th:onclick="prepage([[${blogDetailVo.currentPageNum}-1]])"
+                    th:text="${blogDetailVo.currentPageNum -1}">1</a></li>
+            <li class="active"><a th:text="${blogDetailVo.currentPageNum}">1</a></li>
+            <li th:if="${blogDetailVo.currentPageNum+1 <=blogDetailVo.commentPageNum}"><a
+                    th:onclick="nextpage([[${blogDetailVo.commentPageNum}]],[[${blogDetailVo.currentPageNum}+1]])"
+                    th:text="${blogDetailVo.currentPageNum +1}">1</a></li>
+            <li th:if="${blogDetailVo.currentPageNum+2 <=blogDetailVo.commentPageNum}"><a
+                    th:onclick="nextpage([[${blogDetailVo.commentPageNum}]],[[${blogDetailVo.currentPageNum}+2]])"
+                    th:text="${blogDetailVo.currentPageNum +2}">1</a></li>
+            <li th:if="${blogDetailVo.currentPageNum+3 <=blogDetailVo.commentPageNum}"><a
+                    th:onclick="nextpage([[${blogDetailVo.commentPageNum}]],[[${blogDetailVo.currentPageNum}+3]])"
+                    th:text="${blogDetailVo.currentPageNum +3}">1</a></li>
+            <li th:class="${blogDetailVo.currentPageNum==blogDetailVo.commentPageNum}?'disabled' : ''"><a
+                    th:onclick="nextpage([[${blogDetailVo.commentPageNum}]],[[${blogDetailVo.currentPageNum}+1]])">&raquo;</a>
+            </li>
+        </ul>
+    </th:block>
+</aside>
+</html>

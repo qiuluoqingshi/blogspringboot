@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="blog-list-fragment" class="am-u-lg-8 am-u-sm-12">
+    <main class="articles-list">
+        <div>
+            <th:block th:if="${null != pageIndexVo and pageIndexVo.blogAmount > 0}">
+                <th:block th:each="blog,iterStat : ${pageIndexVo.blogBriefVos}">
+                    <article class="am-g blog-entry-article">
+                        <div class="am-u-lg-6 am-u-lg-12 am-u-sm-12 blog-entry-text post-preview">
+                            <div class="topic-header">
+                                <div class="pull-left">
+                                    <div class="blog-flex-center">
+                                        <div class="blog-flex0">
+                                            <a th:href="@{'/page/userMessage/' + ${blog.userId}}" >
+                                                <img th:src="@{${blog.userAvatar}}" alt=""
+                                                 class="link avatar avatar-image">
+                                            </a>
+                                        </div>
+                                        <div class="author-lockup blog-flex1">
+                                            <a class="link" href="javascript:;"
+                                               th:text="${blog.userName}">13</a>
+                                            <span class="in">in</span>
+                                            <span class="category-name">
+                                <a class="category-name" rel="tag" th:href="@{'/category/' + ${blog.blogCategory}}"
+                                   th:utext="${blog.blogCategory}">
+                                    </a>
+                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="pull-right time pc_time"
+                                      th:text="${#dates.format(blog.createTime, 'yyyy-MM-dd')}">2019-01</span>
+                            </div>
+                            <h1 class="post-index-title"><a itemtype="url" th:href="@{'/blog/' + ${blog.blogId}}">
+                                <th:block th:text="${blog.blogTitle}"></th:block>
+                            </a>
+                            </h1>
+                            <div class="post-content-preview article-body">
+                                <a th:href="@{'/blog/' + ${blog.blogId}}">
+                                    <img th:src="@{${blog.blogCoverImage}}" alt=""></a>
+                            </div>
+                            <div class="clearfix topic-footer">
+                                <span class="pull-left time mobile_time">2018-01</span>
+                            </div>
+                        </div>
+                    </article>
+                </th:block>
+                <th:block th:if="${pageIndexVo.blogAmount > 0}">
+                    <ul class="am-pagination">
+                        <li th:class="${pageIndexVo.currentPageNum==1}?'disabled' : 'am-pagination-prev'"><a
+                                th:href="@{${pageIndexVo.currentPageNum==1}?'##':${preUrl} + ${pageIndexVo.currentPageNum-1}}">&laquo;</a>
+                        </li>
+                        <li th:if="${pageIndexVo.currentPageNum-3 >=1}"><a
+                                th:href="@{${preUrl} + ${pageIndexVo.currentPageNum-3}}"
+                                th:text="${pageIndexVo.currentPageNum -3}">1</a></li>
+                        <li th:if="${pageIndexVo.currentPageNum-2 >=1}"><a
+                                th:href="@{${preUrl} + ${pageIndexVo.currentPageNum-2}}"
+                                th:text="${pageIndexVo.currentPageNum -2}">1</a></li>
+                        <li th:if="${pageIndexVo.currentPageNum-1 >=1}"><a
+                                th:href="@{${preUrl} + ${pageIndexVo.currentPageNum-1}}"
+                                th:text="${pageIndexVo.currentPageNum -1}">1</a></li>
+                        <li class="active"><a href="#" th:text="${pageIndexVo.currentPageNum}">1</a></li>
+                        <li th:if="${pageIndexVo.currentPageNum+1 <=pageIndexVo.blogPageNum}"><a
+                                th:href="@{${preUrl} + ${pageIndexVo.currentPageNum+1}}"
+                                th:text="${pageIndexVo.currentPageNum +1}">1</a></li>
+                        <li th:if="${pageIndexVo.currentPageNum+2 <=pageIndexVo.blogPageNum}"><a
+                                th:href="@{${preUrl} + ${pageIndexVo.currentPageNum+2}}"
+                                th:text="${pageIndexVo.currentPageNum +2}">1</a></li>
+                        <li th:if="${pageIndexVo.currentPageNum+3 <=pageIndexVo.blogPageNum}"><a
+                                th:href="@{${preUrl} + ${pageIndexVo.currentPageNum+3}}"
+                                th:text="${pageIndexVo.currentPageNum +3}">1</a></li>
+                        <li th:class="${pageIndexVo.currentPageNum==pageIndexVo.blogPageNum}?'disabled' : ''">
+                            <a
+                                    th:href="@{${pageIndexVo.currentPageNum==pageIndexVo.blogPageNum}?'##' : ${preUrl} + ${pageIndexVo.currentPageNum+1}}">&raquo;</a>
+                        </li>
+                    </ul>
+                </th:block>
+            </th:block>
+            <th:block th:if="${null == pageIndexVo or pageIndexVo.blogAmount <= 0}">
+                <article class="am-g blog-entry-article">
+                    <div class="am-u-lg-6 am-u-lg-12 am-u-sm-12 blog-entry-text post-preview">
+                        <h1 style="text-align:center">暂无数据</h1>
+                    </div>
+                </article>
+            </th:block>
+        </div>
+    </main>
+</div>
+</html>

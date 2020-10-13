@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qlqs.blogspringboot.dao.OtherInformationDao">
+    <select id="findHotTag" parameterType="int" resultType="TagDetail">
+        select * from blogtag order by tag_views desc limit #{limit}
+    </select>
+    <select id="findNewBlog" parameterType="int" resultType="BlogDetail">
+        select * from blogdetail order by create_time desc limit #{limit}
+    </select>
+    <select id="findHotBlog" parameterType="int" resultType="BlogDetail">
+        select * from blogdetail order by blog_views desc limit #{limit}
+    </select>
+    <select id="findConfiguration" resultType="ConfigurationDetail">
+        select * from configuration where web_config_id = 1
+    </select>
+    <select id="findUserDetailByUserId" resultType="UserDetail" parameterType="String">
+        select * from userdetail where user_id = #{userid}
+    </select>
+    <insert id="addNewBlogTagsByBlog" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="tagId">
+        insert ignore into blogtag(tag_name,create_time,tag_views) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.tagName},#{item.createTime},0)
+        </foreach>
+    </insert>
+    <insert id="addNewBlogTagsAndBlogConnect">
+        insert into bdetail_btag(blog_id,tag_id) values
+        <foreach collection="tagDetails" item="item" index="index" separator=",">
+            (#{blogDetail.blogId},#{item.tagId})
+        </foreach>
+    </insert>
+    <delete id="oldBlogTagAndBlogDeleteConnect" parameterType="long">
+        delete from bdetail_btag where blog_id = #{blogid}
+    </delete>
+    <select id="findOldBlogTagId" parameterType="String" resultType="TagDetail">
+            select * from blogtag where tag_name = #{tagName}
+    </select>
+    <select id="findAllCategoryDetails" resultType="CategoryDetail">
+        select * from blogcategory
+    </select>
+    <select id="findAllCategoryDetailsByMap" parameterType="Map" resultType="CategoryDetail">
+        select * from blogcategory limit #{start},#{limit}
+    </select>
+    <select id="findAllCategoryDetailsAmount" resultType="int">
+        select count(*) from blogcategory
+    </select>
+    <select id="findAllLinkDetail" resultType="LinkDetail">
+        select * from flink ORDER BY link_rank DESC
+    </select>
+    <insert id="saveBlogCategory" parameterType="CategoryDetail">
+        insert into blogcategory(blogcategory_name, create_time,blogcategory_views)
+        values(#{blogcategoryName},#{createTime},#{blogcategoryViews})
+    </insert>
+    <update id="updateBlogCategory" parameterType="CategoryDetail">
+        update blogcategory set blogcategory_name = #{blogcategoryName}
+        where blogcategory_id = #{blogcategoryId}
+    </update>
+    <update id="updateBlogDetailCategory" parameterType="java.util.List">
+        update blogdetail bd
+        left join blogcategory bg on bd.blog_category = bg.blogcategory_name
+        set bd.blog_category = "默认分类"
+        where bg.blogcategory_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+    </update>
+    <delete id="deleteBlogCategory" parameterType="java.util.List">
+        delete from blogcategory
+        where blogcategory_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+    <select id="findAllTagDetailsByMap" parameterType="Map" resultType="TagDetail">
+        select * from blogtag limit #{start},#{limit}
+    </select>
+    <select id="findAllTagDetailsAmount" resultType="int">
+        select count(*) from blogtag
+    </select>
+    <insert id="insertNewTags" parameterType="TagDetail">
+        insert into blogtag(tag_name, create_time, tag_views)values(#{tagName},#{createTime},#{tagViews})
+    </insert>
+    <delete id="deleteOldTags" parameterType="java.util.List">
+        delete from blogtag
+        where tag_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+        ;
+        delete from bdetail_btag
+        where tag_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+    <select id="findAllLinkDetailByMap" parameterType="Map" resultType="LinkDetail">
+        select * from flink limit #{start},#{limit};
+    </select>
+    <select id="findAllLinkDetailsAmount" resultType="int">
+        select count(*) from flink;
+    </select>
+    <insert id="insertNewLink" parameterType="LinkDetail">
+        insert into flink(link_name,link_href,link_author,link_type,link_description,link_rank,create_time)
+        values(#{linkName},#{linkHref},#{linkAuthor},#{linkType},#{linkDescription},#{linkRank},#{createTime})
+    </insert>
+    <update id="updateOldLink" parameterType="LinkDetail">
+        update flink set link_name = #{linkName},link_href = #{linkHref},
+        link_author = #{linkAuthor},link_type = #{linkType},
+        link_description = #{linkDescription},
+        link_rank = #{linkRank}
+        where link_id = #{linkId}
+    </update>
+    <delete id="deleteOldLink" parameterType="java.util.List">
+        delete from flink
+        where link_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+    <update id="updateWebIcon" parameterType="String">
+        update configuration set web_icon = #{filePath} where web_config_id = 1
+    </update>
+    <update id="updateWebMessage" parameterType="ConfigurationDetail">
+        update configuration set web_name = #{webName},web_describe = #{webDescribe},web_icp = #{webIcp} where web_config_id = 1
+    </update>
+    <update id="updateUserInfo" parameterType="ConfigurationDetail">
+        update configuration set web_by_author = #{webByAuthor},author_contact = #{authorContact},author_email = #{authorEmail} where web_config_id = 1
+    </update>
+</mapper>

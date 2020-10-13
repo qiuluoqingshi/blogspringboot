@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qlqs.blogspringboot.dao.UserPageDao">
+    <select id="findUserAccountByUserId" parameterType="String" resultType="UserAccount">
+        select * from useraccount where user_id = #{userId}
+    </select>
+    <select id="findUserDetailByUserId" parameterType="String" resultType="UserDetail">
+        select * from userdetail where user_id = #{userId}
+    </select>
+    <select id="findRoleDetailByUserId" parameterType="String" resultType="RoleDetail">
+        select r.* from role r left join uaccount_role uar on uar.role_id = r.role_id
+        left join useraccount ua on uar.user_id = ua.user_id
+        where ua.user_id = #{userId}
+    </select>
+    <select id="findBlogAmount" parameterType="String" resultType="long">
+        select count(*) from uaccount_bdetail
+        <if test="userId != null">
+            where user_id = #{userId}
+        </if>
+    </select>
+    <select id="findCommentAmount" parameterType="String" resultType="long">
+        select count(*) from bdetail_bcomment
+        <if test="userId != null">
+            bdbc left join uaccount_bdetail uabd on uabd.blog_id = bdbc.blog_id
+            where uabd.user_id = #{userId}
+        </if>
+    </select>
+    <select id="findCategoryAmount" parameterType="String" resultType="long">
+        select count(*) from blogcategory;
+    </select>
+    <select id="findTagAmount" resultType="long">
+        select count(*) from blogtag;
+    </select>
+    <select id="findLinkAmount" resultType="long">
+        select count(*) from flink;
+    </select>
+    <update id="updateUserAvatar" >
+        update userdetail set user_avatar = #{newNameUrl}
+        where user_id = #{userid}
+    </update>
+
+    <update id="updateUserPassword" >
+        update useraccount set user_password = #{newPassword} where user_id = #{userid}
+    </update>
+
+    <update id="updateUserMessage" >
+        update userdetail set user_name = #{userDetail.userName} , user_sex = #{userDetail.userSex}
+        <if test="userDetail.userSignature != ''">
+            , user_signature = #{userDetail.userSignature}
+        </if>
+        <if test="userDetail.userBirth != ''">
+            , user_birth = #{userDetail.userBirth}
+        </if>
+        <if test="userDetail.userWeixin != ''">
+            , user_weixin = #{userDetail.userWeixin}
+        </if>
+        <if test="userDetail.userQq != ''">
+            , user_qq = #{userDetail.userQq}
+        </if>
+        <if test="userDetail.userPhone != ''">
+            , user_phone = #{userDetail.userPhone}
+        </if>
+        <if test="userDetail.userSchool != ''">
+            , user_school = #{userDetail.userSchool}
+        </if>
+        <if test="userDetail.userCompany != ''">
+            , user_company = #{userDetail.userCompany}
+        </if>
+        where user_id = #{userid}
+    </update>
+    <insert id="insertNewUserAccount" parameterType="UserAccount">
+        insert into useraccount(user_id,user_password,locked,salt)
+        values(#{userId},#{userPassword},#{locked},#{salt})
+    </insert>
+    <insert id="insertNewUserDetail" parameterType="UserDetail">
+        insert into userdetail(user_id,user_name,user_avatar)
+        values(#{userId},#{userName},#{userAvatar})
+    </insert>
+    <insert id="insertNewUserRole" parameterType="UserAccount">
+        insert into uaccount_role(user_id,role_id)
+        values(#{userId},2)
+    </insert>
+</mapper>

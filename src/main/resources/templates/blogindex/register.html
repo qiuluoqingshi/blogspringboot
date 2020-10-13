@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" xmlns:this.th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" th:content="${configuration.webDescribe}">
+    <link rel="shortcut icon" th:href="@{${configuration.webIcon}}"/>
+    <title th:text="|${configuration.webName}| + ' - 注册'">注册</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/blogindex/css/signin.css}" rel="stylesheet">
+</head>
+
+<body class="text-center">
+<a id="shiro-principal" style="display: none"><shiro:principal/></a>
+<div class="form-signin" >
+    <a href="/">
+        <img class="mb-4" th:src="@{/images/bootstrap-solid.svg}" alt="" width="72" height="72">
+    </a>
+    <h1 class="h3 mb-3 font-weight-normal" th:text="${configuration.webName} + '注册'">注册</h1>
+    <label class="sr-only">账号</label>
+    <input id="userId" type="text" class="form-control" placeholder="账号" required="" autofocus="">
+    <label class="sr-only">昵称</label>
+    <input id="userName" type="text" class="form-control" placeholder="昵称" required="" autofocus="" style="margin-top: 10px">
+    <label class="sr-only">密码</label>
+    <input id="userPassword" type="password" class="form-control" placeholder="密码" required="" style="margin-top: 10px">
+    <label class="sr-only">密码确认</label>
+    <input id="userPasswordVf" type="password" class="form-control" placeholder="密码确认" required="">
+    <div class="verifyCodeImg">
+        <input id="verifyCode" type="text" class="form-control" placeholder="验证码" style="width: 45%">
+        <img id="code" class="code" th:src="@{/page/getVerifyCode}" th:onclick="'javascript:freshVerifyCode()'"  th:style="'padding-left:10%;width: 45%;height:47px;border-radius:4px'">
+    </div>
+    <p id="verifyResult" style="color: red;margin-top: 10px;font-size: 16px"></p>
+    <button class="btn btn-lg btn-primary btn-block" id="rgt_submit" type="submit" style="background-color:green">注册</button>
+    <button class="btn btn-lg btn-primary btn-block" id="lg_submit" type="submit" >回到登录界面</button>
+</div>
+<script th:src="@{/blogbackground/dist/js/public.js}"></script>
+<script th:src="@{/blogindex/plugins/jquery/jquery.min.js}"></script>
+<script th:src="@{/blogbackground/plugins/sweetalert/sweetalert.min.js}"></script>
+<script th:src="@{/blogindex/plugins/getCookie/getCookie.js}"></script>
+<script th:src="@{/blogindex/plugins/register/register.js}"></script>
+</body>
+</html>

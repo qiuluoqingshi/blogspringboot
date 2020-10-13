@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <title th:text="|${configuration.webName}| + ' - 详情'">详情</title>
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="Window-target" content="_top"/>
+    <meta name="description" th:content="${configuration.webDescribe}">
+    <link rel="shortcut icon" th:href="@{${configuration.webIcon}}"/>
+    <link rel="stylesheet" th:href="@{/blogindex/css/base.css}">
+    <!-- highlight -->
+    <link rel="stylesheet" th:href="@{/blogindex/plugins/highlight/styles/paraiso-light.css}">
+    <link rel="stylesheet" th:href="@{/blogbackground/plugins/editormd/css/editormd.css}">
+<!--    <link rel="stylesheet" th:href="@{/blogindex/plugins/highlight/styles/paraiso-light.css}">-->
+    <style>
+        .hljs {
+            background: none;
+        }
+        pre code {
+            white-space: pre;
+        }
+
+        blockquote {
+            border-left: 4px solid #42b983;
+            padding: 10px 0px 10px 15px;
+            color: #777;
+            background-color: rgba(66, 185, 131, .1);
+            max-width: 890px;
+        }
+    </style>
+
+</head>
+<body>
+<div th:replace="blogindex/header::nav-fragment"></div>
+<header th:fragment="header-fragment" class="intro-header"
+        th:style="'background-image:url(' + @{/images/header.jpg} + '); '">
+    <div class="container" >
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1 th:text="${blogDetailVo.blogDetail.blogTitle}"></h1>
+                    <span class="meta">
+                        <th:block th:text="${#dates.format(blogDetailVo.blogDetail.createTime, 'yyyy-MM-dd')}"></th:block> &nbsp;
+                            <div class="comments-view" style="display: inline-block">
+                                <a href="#comments" class="article-comments"><th:block
+                                        th:text="${blogDetailVo.commentAmount}"></th:block>条评论</a> &nbsp;
+                                <th:block th:text="${blogDetailVo.blogDetail.blogViews}"></th:block>浏览
+                            </div>
+                            </span>
+                    <div class="tags post-tags" th:if="${blogDetailVo.tagAmount} gt 0">
+                        <th:block  th:each="tag : ${blogDetailVo.tagDetails}">
+                            <a class="tag" rel="tag" th:href="@{'/tag/' + ${tag.tagId}}">
+                                <th:block th:text="${tag.tagName}"></th:block>
+                            </a>&nbsp;
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="am-g am-g-fixed blog-fixed" >
+        <div class="am-u-lg-12 am-u-sm-12">
+            <article class="am-article blog-article-p article-trigger">
+                <div id="detailContent-md" class="am-article-bd article-body">
+                    <textarea th:id="'message'" th:name="'message'" th:utext="${blogDetailVo.blogDetail.blogContent}"/>
+                </div>
+            </article>
+            <hr>
+        </div>
+    </div>
+    <div th:replace="blogindex/comment::comment-fragment"></div>
+    <p class="back-top" id="back-top" style="display:none"><a href="#top"><span></span></a></p>
+</div>
+<footer th:replace="blogindex/footer::footer-fragment"></footer>
+</body>
+<script th:src="@{/blogindex/plugins/jquery/jquery.min.js}"></script>
+<script th:src="@{/blogindex/plugins/highlight/highlight.pack.js}"></script>
+<script th:src="@{/blogbackground/plugins/editormd/editormd.min.js}"></script>
+<script th:src="@{/blogbackground/plugins/editormd/lib/flowchart.min.js}"></script>
+<script th:src="@{/blogbackground/plugins/editormd/lib/jquery.flowchart.min.js}"></script>
+<script th:src="@{/blogbackground/plugins/editormd/lib/marked.min.js}"></script>
+<script th:src="@{/blogbackground/plugins/editormd/lib/prettify.min.js}"></script>
+<script th:src="@{/blogbackground/plugins/editormd/lib/raphael.min.js}"></script>
+<!--<script th:src="@{/blogbackground/plugins/editormd/lib/sequence-diagram.min.js}"></script>-->
+<script th:src="@{/blogbackground/plugins/editormd/lib/underscore.min.js}"></script>
+<script th:src="@{/blogindex/plugins/comment/valid.js}"></script>
+<script  th:src="@{/blogindex/plugins/comment/comment.js}"></script>
+<script th:src="@{/blogindex/plugins/getCookie/getCookie.js}"></script>
+<!-- sweetalert -->
+<script th:src="@{/blogbackground/plugins/sweetalert/sweetalert.min.js}"></script>
+<script th:inline="javascript">
+    var blogid = [[${blogid}]];var comments;var pid;
+    var currentPageNum= [[${blogDetailVo.currentPageNum}]];
+    var testEditor;
+    $(function () {
+        testEditor = editormd.markdownToHTML("detailContent-md",{
+            path:"/blogbackground/plugins/editormd/lib/",
+            preview: true,
+            watch: true,
+            editor: false
+        })
+        $("#back-top").hide();
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 300) {
+                $('#back-top').fadeIn();
+            } else {
+                $('#back-top').fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        $('#back-top a').click(function () {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+
+        $('pre code').each(function (i, block) {
+            hljs.highlightBlock(block);
+        });
+
+        $('article h1, article h2, article h3, article h4, article h5').find('a').removeAttr('target')
+    })
+
+</script>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+    <head th:replace="blogindex/header::head-fragment"></head>
+    <body id="blog">
+    <div th:replace="blogindex/header::nav-fragment"></div>
+    <div th:replace="blogindex/header::header-fragment"></div>
+    <div class="am-g am-g-fixed blog-fixed">
+        <div th:replace="blogindex/blog-list::blog-list-fragment"></div>
+        <div th:replace="blogindex/side::side-fragment"></div>
+    </div>
+    <footer th:replace="blogindex/footer::footer-fragment"></footer>
+    </body>
+    <script th:src="@{/blogindex/plugins/jquery/jquery.min.js}"></script>
+    <script th:src="@{/blogindex/plugins/search/search.js}"></script>
+</html>

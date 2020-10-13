@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:replace="blogbackground/header::header-fragment"></header>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- 引入页面头header-fragment -->
+    <div th:replace="blogbackground/header::header-nav"></div>
+    <!-- 引入工具栏sidebar-fragment -->
+    <div th:replace="blogbackground/sidebar::sidebar-fragment(${path})"></div>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card card-primary card-outline">
+                            <div class="card-header">
+                                <h3 class="card-title">修改头像</h3>
+                            </div> <!-- /.card-body -->
+                            <div class="card-body">
+                                <form role="form" id="userAvatarForm">
+                                    <div class="form-group col-sm-8">
+                                        <div class="alert alert-danger" id="updateUserAvatar-info" style="display: none;"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <!--                                        /images/userAvatar/default.jpg-->
+                                        <div style="position: relative;border: 5px solid lightblue;width: 156px;height:156px;margin: 5px auto;border-radius: 50%;">
+                                            <img th:src="@{${userDetail.userAvatar}}" alt="选择并上传头像" id="avatar_img"
+                                                 style="width: 146px;height: 146px;left:0;top: 0;border-radius: 50%;"/>
+                                            <input type="file" id="avatar_file" name="avatar_file" accept="image/jpg,image/png,image/gif"
+                                                   style="width: 100%;height:100%;opacity: 0;position: absolute;left:0;top: 0;"/>
+                                        </div>
+                                        <div style="position: relative;height:auto;text-align: center;padding-top: 47px">
+                                            <h3>点击头像可以更换头像</h3>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" id="updateUserAvatarButton" onsubmit="return false;"
+                                                class="btn btn-danger float-right" disabled="disabled">确认修改
+                                        </button>
+                                    </div>
+                                </form>
+                            </div><!-- /.card-body -->
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card card-primary card-outline">
+                            <div class="card-header">
+                                <h3 class="card-title">修改密码</h3>
+                            </div> <!-- /.card-body -->
+                            <div class="card-body">
+                                <form role="form" id="userPasswordForm">
+                                    <div class="form-group col-sm-8">
+                                        <div class="alert alert-danger updatePassword-info" id="updatePassword-info" style="display: none;"></div>
+                                    </div>
+                                    <!-- input states -->
+                                    <div class="form-group">
+                                        <label class="control-label"><i class="fa fa-key"></i> 旧密码</label>
+                                        <input type="text" class="form-control" id="oldPassword"
+                                               name="oldPassword" placeholder="请输入旧密码" required="true"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label"><i class="fa fa-key"></i> 新密码</label>
+                                        <input type="text" class="form-control" id="newPassword"
+                                               name="newPassword" placeholder="请输入新密码" required="true"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label"><i class="fa fa-key"></i> 确认新密码</label>
+                                        <input type="text" class="form-control" id="newPasswordAgain" name="newPasswordAgain"
+                                               placeholder="请再次输入新密码" required="true"/>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" id="updatePasswordButton" onsubmit="return false;"
+                                                class="btn btn-danger float-right">确认修改
+                                        </button>
+                                    </div>
+                                </form>
+                            </div><!-- /.card-body -->
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card card-primary card-outline">
+                            <div class="card-header">
+                                <h3 class="card-title">基本信息</h3>
+                            </div> <!-- /.card-body -->
+                            <div class="card-body">
+                                <form role="form" id="userMessageForm">
+                                    <div class="form-group col-sm-8">
+                                        <div class="alert alert-danger" id="updateUserMessage-info" style="display: none;"></div>
+                                    </div>
+                                    <!-- text input -->
+                                    <div class="form-group">
+                                        <label>昵称</label>
+                                        <input type="text" class="form-control" id="userName" name="userName" placeholder="请输入昵称" required="true"
+                                               th:value="${null!=userDetail and null!=userDetail.userName}?${userDetail.userName}:''"
+                                               onchange="userMessageChange()"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>性别</label>
+                                        <select class="form-control" id="userSex" name="userSex" placeholder="请选择性别" onchange="userMessageChange()">
+                                            <option value="1" th:selected="${null!=userDetail and null!=userDetail.userSex and userDetail.userSex==1} ?true:false">
+                                                男
+                                            </option>
+                                            <option value="0" th:selected="${null!=userDetail and null!=userDetail.userSex and userDetail.userSex==0} ?true:false">
+                                                女
+                                            </option>
+                                            <option value="-1" th:selected="${null!=userDetail and (null==userDetail.userSex or -1 == userDetail.userSex)} ?true:false">
+                                                保密
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>生日</label>
+                                        <div class='input-group date' id='datetimepicker'>
+                                            <input type='text' class="form-control" id="userBirth" name="userBirth"
+                                                   th:value="${null!=userDetail and null!=userDetail.userBirth}?${userDetail.userBirth}:''"/>
+                                            <span class="input-group-addon" style="padding-top: 8px;padding-left: 5px;border-top-right-radius: 15%;border-bottom-right-radius: 15%;border: 1px solid #ced4da">
+                                                <span class="glyphicon glyphicon-calendar" onclick="userMessageChange()"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>微信</label>
+                                        <input type="text" class="form-control" id="userWeixin" name="userWeixin" placeholder="请输入微信" required="true"
+                                               th:value="${null!=userDetail and null!=userDetail.userWeixin?userDetail.userWeixin:''}"
+                                               onchange="userMessageChange()"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>QQ</label>
+                                        <input type="text" class="form-control" id="userQq" name="userQq" placeholder="请输入QQ" required="true"
+                                               th:value="${null!=userDetail and null!=userDetail.userQq?userDetail.userQq:''}"
+                                               onchange="userMessageChange()"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>手机号码</label>
+                                        <input type="text" class="form-control" id="userPhone" name="userPhone" placeholder="请输入手机号码" required="true"
+                                               th:value="${null!=userDetail and null!=userDetail.userPhone?userDetail.userPhone:''}"
+                                               onchange="userMessageChange()"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>所在或毕业院校</label>
+                                        <input type="text" class="form-control" id="userSchool" name="userSchool" placeholder="请输入所在或毕业院校" required="true"
+                                               th:value="${null!=userDetail and null!=userDetail.userSchool?userDetail.userSchool:''}"
+                                               onchange="userMessageChange()"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>所在公司</label>
+                                        <input type="text" class="form-control" id="userCompany" name="userCompany" placeholder="请输入所在公司" required="true"
+                                               th:value="${null!=userDetail and null!=userDetail.userCompany?userDetail.userCompany:''}"
+                                               onchange="userMessageChange()"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>简介</label>
+                                        <input type="text" class="form-control" id="userSignature" name="userSignature" placeholder="请输入简介" required="true"
+                                               th:value="${null!=userDetail and null!=userDetail.userSignature?userDetail.userSignature:''}"
+                                               onchange="userMessageChange()"/>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" id="updateUserMessageButton" onsubmit="return false;"
+                                                class="btn btn-danger float-right" disabled="disabled">确认修改
+                                        </button>
+                                    </div>
+                                </form>
+                            </div><!-- /.card-body -->
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- 引入页脚footer-fragment -->
+    <div th:replace="blogbackground/footer::footer-fragment"></div>
+</div>
+<!-- jQuery -->
+<script th:src="@{/blogbackground/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/blogbackground/plugins/jQueryUI/jquery-ui.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/blogbackground/plugins/bootstrap/js/bootstrap.js}"></script>
+<script th:src="@{/blogbackground/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/blogbackground/plugins/bootstrap/js/moment-with-locales.min.js}"></script>
+<script th:src="@{/blogbackground/plugins/bootstrap/js/bootstrap-datetimepicker.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/blogbackground/dist/js/adminlte.min.js}"></script>
+<script th:src="@{/blogbackground/plugins/sweetalert/sweetalert.min.js}"></script>
+<!-- public.js -->
+<script th:src="@{/blogbackground/dist/js/public.js}"></script>
+<script th:src="@{/blogbackground/plugins/ajaxupload/ajaxupload.js}"></script>
+<!-- profile -->
+<script th:src="@{/blogbackground/dist/js/profile.js}"></script>
+<script th:src="@{/blogindex/plugins/getCookie/getCookie.js}"></script>
+</body>
+<script>
+    $(function () {
+        $("#sidebar-userName").text(GetCookie("userName"))
+        $('#datetimepicker').datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-cn'),
+        });
+    })
+    $("#avatar_file").change(function () {
+        // 获取上传文件对象
+        var file = $(this)[0].files[0];
+        // 读取文件URL
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        $("#updateUserAvatarButton").removeAttr("disabled")
+        // 阅读文件完成后触发的事件
+        reader.onload = function () {
+            // 读取的URL结果：this.result
+            $("#avatar_img").attr("src", this.result);
+        }
+    });
+</script>
+</html>

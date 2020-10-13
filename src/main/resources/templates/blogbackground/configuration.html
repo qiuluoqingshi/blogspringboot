@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:replace="blogbackground/header::header-fragment"></header>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- 引入页面头header-fragment -->
+    <div th:replace="blogbackground/header::header-nav"></div>
+    <!-- 引入工具栏sidebar-fragment -->
+    <div th:replace="blogbackground/sidebar::sidebar-fragment(${path})"></div>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card card-primary card-outline">
+                            <div class="card-header">
+                                <h3 class="card-title">网站信息</h3>
+                            </div> <!-- /.card-body -->
+                            <div class="card-body">
+                                <form role="form" id="websiteForm">
+                                    <div class="form-group col-sm-8">
+                                        <div class="alert alert-danger" id="websiteForm-info" style="display: none;"></div>
+                                    </div>
+                                    <!-- text input -->
+                                    <div class="form-group">
+                                        <label>网站名称</label>
+                                        <input type="text" class="form-control" id="webName"
+                                               name="webName"
+                                               placeholder="站点名称" th:value="${configuration.webName}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>网站描述</label>
+                                        <input type="text" class="form-control" id="webDescribe"
+                                               name="webDescribe"
+                                               th:value="${configuration.webDescribe}"
+                                               placeholder="站点描述">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>网站备案</label>
+                                        <input type="text" class="form-control" id="webIcp"
+                                               name="webIcp" th:value="${configuration.webIcp}"
+                                               placeholder="网站备案">
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" id="updateWebButton" onsubmit="return false;"
+                                                class="btn btn-danger float-right">确认修改
+                                        </button>
+                                    </div>
+                                </form>
+                            </div><!-- /.card-body -->
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card card-primary card-outline">
+                            <div class="card-header">
+                                <h3 class="card-title">个人信息</h3>
+                            </div> <!-- /.card-body -->
+                            <div class="card-body">
+                                <form role="form" id="userInfoForm">
+                                    <div class="form-group col-sm-8">
+                                        <div class="alert alert-danger" id="userInfoForm-info" style="display: none;"></div>
+                                    </div>
+                                    <!-- input states -->
+                                    <div class="form-group">
+                                        <label class="control-label">个人名称</label>
+                                        <input type="text" class="form-control" id="webByAuthor"
+                                               name="webByAuthor" th:value="${configuration.webByAuthor}"
+                                               placeholder="个人名称">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">个人QQ</label>
+                                        <input type="email" class="form-control" id="authorContact" name="authorContact"
+                                               th:value="${configuration.authorContact}"
+                                               placeholder="个人QQ">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">个人邮箱</label>
+                                        <input type="email" class="form-control" id="authorEmail" name="authorEmail"
+                                               th:value="${configuration.authorEmail}"
+                                               placeholder="个人邮箱">
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" id="updateUserInfoButton" onsubmit="return false;"
+                                                class="btn btn-danger float-right">确认修改
+                                        </button>
+                                    </div>
+                                </form>
+                            </div><!-- /.card-body -->
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card card-primary card-outline">
+                            <div class="card-header">
+                                <h3 class="card-title">修改网站Icon</h3>
+                            </div> <!-- /.card-body -->
+                            <div class="card-body">
+                                <form role="form" id="userAvatarForm">
+                                    <div class="form-group col-sm-8">
+                                        <div class="alert alert-danger" id="updateWebIcon-info" style="display: none;"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div style="position: relative;border: 5px solid lightblue;width: 150px;height:150px;margin: 5px auto;border-radius: 50%;">
+                                            <img th:src="@{${configuration.webIcon}}" alt="选择并上传网站Icon" id="webIcon_img"
+                                                 style="width: 140px;height: 140px;left:0;top: 0;border-radius: 50%;"/>
+                                            <input type="file" id="webIcon_file" name="webIcon_file" accept="image/jpg,image/png,image/gif"
+                                                   style="width: 100%;height:100%;opacity: 0;position: absolute;left:0;top: 0;"/>
+                                        </div>
+                                        <div style="position: relative;height:auto;text-align: center;padding-top: 46px">
+                                            <p>点击图标可以更换网站Icon</p>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" id="updateWebIcon" onsubmit="return false;"
+                                                class="btn btn-danger float-right" disabled="disabled">确认修改
+                                        </button>
+                                    </div>
+                                </form>
+                            </div><!-- /.card-body -->
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- 引入页脚footer-fragment -->
+    <div th:replace="blogbackground/footer::footer-fragment"></div>
+</div>
+<!-- jQuery -->
+<script th:src="@{/blogbackground/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/blogbackground/plugins/jQueryUI/jquery-ui.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/blogbackground/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/blogbackground/dist/js/adminlte.min.js}"></script>
+<!-- sweetalert -->
+<script th:src="@{/blogbackground/plugins/sweetalert/sweetalert.min.js}"></script>
+<script th:src="@{/blogbackground/dist/js/configuration.js}"></script>
+<script th:src="@{/blogbackground/dist/js/public.js}"></script>
+<script th:src="@{/blogindex/plugins/getCookie/getCookie.js}"></script>
+</body>
+<script>
+    $(function () {
+        $("#sidebar-userName").text(GetCookie("userName"))
+    })
+    $("#webIcon_file").change(function () {
+        // 获取上传文件对象
+        var file = $(this)[0].files[0];
+        // 读取文件URL
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        $("#updateWebIcon").removeAttr("disabled")
+        // 阅读文件完成后触发的事件
+        reader.onload = function () {
+            // 读取的URL结果：this.result
+            $("#webIcon_img").attr("src", this.result);
+        }
+    });
+</script>
+</html>
