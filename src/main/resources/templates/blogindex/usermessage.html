@@ -43,7 +43,8 @@
                         <p th:text="${userDetail.userName}"></p>
                     </div>
                     <span class="meta">
-                        <th:block th:text="'生日:'+ (${userDetail.userBirth != null and userDetail.userBirth != ''}?${#dates.format(userDetail.userBirth, 'yyyy-MM-dd')}:'保密')" ></th:block> &nbsp;
+<!--                        #dates.format(userDetail.userBirth, 'yyyy-MM-dd')-->
+                        <th:block th:text="'生日:'+ (${userDetail.userBirth != null and userDetail.userBirth != ''}?${userDetail.userBirth}:'保密')" ></th:block> &nbsp;
                     </span>
                     <span class="meta">
                         <th:block th:text="'简介:'+ (${userDetail.userSignature != null and userDetail.userSignature != ''}?${userDetail.userSignature}:'此人很懒，暂无简介')" ></th:block> &nbsp;
